@@ -1,4 +1,4 @@
 /scripting/*
 !/scripting/autoServerSlot.sp
-!/scripting/compiled/autoServerSlot.smx
+!/scripting/compiled/
 .vscode
