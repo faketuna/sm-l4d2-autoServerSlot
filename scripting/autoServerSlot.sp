@@ -97,22 +97,16 @@ public void OnClientConnected(int client) {
     
     g_iPlayerCount++;
     g_cSvMaxPlayers.SetInt(g_iPlayerCount+1);
-    int alive = 0;
+    int inGameClients = 0;
     for(int i = 1; i <= MaxClients; i++) {
-        if(!IsClientConnected(i))
+        if(!IsClientConnected(i) || !IsClientInGame(i) || GetClientTeam(i) != TEAM_SURVIVOR)
             continue;
-        if(!IsClientInGame(i))
-            continue;
-        if(!IsPlayerAlive(i))
-            continue;
-        if(GetClientTeam(i) != TEAM_SURVIVOR)
-            continue;
-        alive++;
+        inGameClients++;
     }
 
-    PrintDebug("Alive survivors: %d", alive);
+    PrintDebug("In game suriviros: %d", inGameClients);
     PrintDebug("Current players: %d", g_iPlayerCount);
-    if(g_iPlayerCount <= alive) {
+    if(g_iPlayerCount <= inGameClients) {
         PrintDebug("Server has enough survivors entities to fit current player count.");
         return;
     }
