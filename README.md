@@ -4,6 +4,7 @@
 
 * Dynamically set l4d_survivor_limit to number of in game users.
 * Add bots when player joined to game.
+* Removes bot if survivors are higher than 5.
 
 ## Require
 
