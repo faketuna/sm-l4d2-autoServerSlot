@@ -96,7 +96,7 @@ public void OnClientConnected(int client) {
         return;
     
     g_iPlayerCount++;
-    g_cSvMaxPlayers.SetInt(g_iPlayerCount+1);
+    setServerSlotLimit();
     int inGameClients = 0;
     for(int i = 1; i <= MaxClients; i++) {
         if(!IsClientConnected(i) || !IsClientInGame(i) || GetClientTeam(i) != TEAM_SURVIVOR)
@@ -147,7 +147,8 @@ public void OnClientDisconnect(int client) {
         return;
 
     g_iPlayerCount--;
-    g_cSvMaxPlayers.SetInt(g_iPlayerCount+1);
+    setServerSlotLimit();
+    setSurvivorLimit();
     CreateTimer(0.4, delayedKickTimer, client, TIMER_FLAG_NO_MAPCHANGE);
     PrintDebug("The player count decreased to %d", g_iPlayerCount);
 }
@@ -194,4 +195,12 @@ void setSurvivorLimit() {
         return;
     }
     g_cSurvivorLimit.SetInt(g_iPlayerCount);
+}
+
+void setServerSlotLimit() {
+    if(g_iPlayerCount <= 4) {
+        g_cSvMaxPlayers.SetInt(4);
+        return;
+    }
+    g_cSvMaxPlayers.SetInt(g_iPlayerCount+1);
 }
