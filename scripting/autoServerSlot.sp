@@ -14,6 +14,8 @@
 ConVar g_cPrintDebugInfo;
 ConVar g_cSurvivorLimit;
 ConVar g_cSvMaxPlayers;
+ConVar g_cMDStartMedCount;
+ConVar g_cMDSafeRoomMedCount;
 
 bool g_bPrintDebugInfo;
 
@@ -38,6 +40,8 @@ public void OnPluginStart()
     g_cPrintDebugInfo       = CreateConVar("sm_aslot_debug", "0", "Toggle debug information that printed to server", FCVAR_NONE, true, 0.0, true , 1.0);
     g_cSurvivorLimit        = FindConVar("l4d_survivor_limit");
     g_cSvMaxPlayers         = FindConVar("sv_maxplayers");
+    g_cMDStartMedCount      = FindConVar("sm_md_start_medkitcount");
+    g_cMDSafeRoomMedCount   = FindConVar("sm_md_saferoom_medkitcount");
     if(g_cSurvivorLimit == INVALID_HANDLE)
         SetFailState("This plugin require l4d_players to run.");
     
@@ -200,10 +204,12 @@ void PrintDebug(const char[] msg, any ...) {
 void setSurvivorLimit() {
     if(g_iPlayerCount < 4) {
         PrintDebug("Player count is lower than 4, setting survivor limit to 4");
+        updateMedKitCount(4);
         g_cSurvivorLimit.SetInt(4);
         return;
     }
     g_cSurvivorLimit.SetInt(g_iPlayerCount);
+    updateMedKitCount(g_iPlayerCount);
 }
 
 void setServerSlotLimit() {
@@ -213,4 +219,12 @@ void setServerSlotLimit() {
         return;
     }
     g_cSvMaxPlayers.SetInt(g_iPlayerCount+1);
+}
+
+void updateMedKitCount(int medKitCount) {
+    if(g_cMDStartMedCount == INVALID_HANDLE || g_cMDSafeRoomMedCount == INVALID_HANDLE)
+        return;
+    g_cMDStartMedCount.SetInt(medKitCount);
+    g_cMDSafeRoomMedCount.SetInt(medKitCount);
+
 }
