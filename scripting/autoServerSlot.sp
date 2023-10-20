@@ -57,6 +57,7 @@ public void OnPluginStart()
             g_iPlayerCount++;
         }
     }
+    g_bIsMapStarted = true;
 }
 
 public void OnConfigsExecuted() {
@@ -73,13 +74,19 @@ public void OnCvarsChanged(ConVar convar, const char[] oldValue, const char[] ne
 
 public void OnMapEnd()
 {
+    g_iPlayerCount = 0;
     g_bIsMapStarted = false;
 }
 
 public Action OnRoundStartPostNav(Handle event, const char[] name, bool dontBroadcast)
 {
-    g_bIsMapStarted = true;
+    CreateTimer(10.0, DelayedMapStartTimer, _, TIMER_FLAG_NO_MAPCHANGE);
     return Plugin_Continue;
+}
+
+public Action DelayedMapStartTimer(Handle timer) {
+    g_bIsMapStarted = true;
+    return Plugin_Stop;
 }
 
 public Action OnRoundEnd(Handle event, const char[] name, bool dontBroadcast)
@@ -92,11 +99,13 @@ public void OnClientConnected(int client) {
     if(IsFakeClient(client))
         return;
 
-    if(!g_bIsMapStarted)
-        return;
-    
     g_iPlayerCount++;
     setServerSlotLimit();
+    setSurvivorLimit();
+
+    if(!g_bIsMapStarted)
+        return;
+
     int inGameClients = 0;
     for(int i = 1; i <= MaxClients; i++) {
         if(!IsClientConnected(i) || !IsClientInGame(i) || GetClientTeam(i) != TEAM_SURVIVOR)
@@ -134,7 +143,6 @@ public void OnClientConnected(int client) {
     }
     PrintDebug("Kicking bot.");
     KickClient(bot, "adding survivor");
-    setSurvivorLimit();
     PrintDebug("The player count increased to %d", g_iPlayerCount);
 }
 
@@ -143,12 +151,13 @@ public void OnClientDisconnect(int client) {
     if(IsFakeClient(client))
         return;
 
-    if(!g_bIsMapStarted) 
-        return;
-
     g_iPlayerCount--;
     setServerSlotLimit();
     setSurvivorLimit();
+
+    if(!g_bIsMapStarted) 
+        return;
+
     CreateTimer(0.4, delayedKickTimer, client, TIMER_FLAG_NO_MAPCHANGE);
     PrintDebug("The player count decreased to %d", g_iPlayerCount);
 }
@@ -190,7 +199,7 @@ void PrintDebug(const char[] msg, any ...) {
 }
 
 void setSurvivorLimit() {
-    if(g_iPlayerCount <= 4) {
+    if(g_iPlayerCount < 4) {
         g_cSurvivorLimit.SetInt(4);
         return;
     }
@@ -198,7 +207,7 @@ void setSurvivorLimit() {
 }
 
 void setServerSlotLimit() {
-    if(g_iPlayerCount <= 4) {
+    if(g_iPlayerCount < 4) {
         g_cSvMaxPlayers.SetInt(4);
         return;
     }
