@@ -102,6 +102,7 @@ public void OnClientConnected(int client) {
     g_iPlayerCount++;
     setServerSlotLimit();
     setSurvivorLimit();
+    PrintDebug("The player count increased to %d", g_iPlayerCount);
 
     if(!g_bIsMapStarted)
         return;
@@ -143,23 +144,21 @@ public void OnClientConnected(int client) {
     }
     PrintDebug("Kicking bot.");
     KickClient(bot, "adding survivor");
-    PrintDebug("The player count increased to %d", g_iPlayerCount);
 }
 
 public void OnClientDisconnect(int client) {
-    PrintDebug("%N", client);
     if(IsFakeClient(client))
         return;
 
     g_iPlayerCount--;
     setServerSlotLimit();
     setSurvivorLimit();
+    PrintDebug("The player count decreased to %d", g_iPlayerCount);
 
     if(!g_bIsMapStarted) 
         return;
 
     CreateTimer(0.4, delayedKickTimer, client, TIMER_FLAG_NO_MAPCHANGE);
-    PrintDebug("The player count decreased to %d", g_iPlayerCount);
 }
 
 public Action delayedKickTimer(Handle timer, int client) {
@@ -200,6 +199,7 @@ void PrintDebug(const char[] msg, any ...) {
 
 void setSurvivorLimit() {
     if(g_iPlayerCount < 4) {
+        PrintDebug("Player count is lower than 4, setting survivor limit to 4");
         g_cSurvivorLimit.SetInt(4);
         return;
     }
@@ -208,6 +208,7 @@ void setSurvivorLimit() {
 
 void setServerSlotLimit() {
     if(g_iPlayerCount < 4) {
+        PrintDebug("Player count is lower than 4, setting server slot to 4");
         g_cSvMaxPlayers.SetInt(4);
         return;
     }
