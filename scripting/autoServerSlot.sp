@@ -36,7 +36,7 @@ public Plugin myinfo =
 public void OnPluginStart()
 {
     g_cPrintDebugInfo       = CreateConVar("sm_aslot_debug", "0", "Toggle debug information that printed to server", FCVAR_NONE, true, 0.0, true , 1.0);
-    g_cSurvivorLimit        = FindConVar("survivor_limit");
+    g_cSurvivorLimit        = FindConVar("l4d_survivor_limit");
     g_cSvMaxPlayers         = FindConVar("sv_maxplayers");
     if(g_cSurvivorLimit == INVALID_HANDLE)
         SetFailState("This plugin require l4d_players to run.");
