@@ -16,6 +16,7 @@ ConVar g_cSurvivorLimit;
 ConVar g_cSvMaxPlayers;
 ConVar g_cMDStartMedCount;
 ConVar g_cMDSafeRoomMedCount;
+ConVar g_cAutoKick;
 
 bool g_bPrintDebugInfo;
 
@@ -38,6 +39,7 @@ public Plugin myinfo =
 public void OnPluginStart()
 {
     g_cPrintDebugInfo       = CreateConVar("sm_aslot_debug", "0", "Toggle debug information that printed to server", FCVAR_NONE, true, 0.0, true , 1.0);
+    g_cAutoKick             = CreateConVar("sm_aslot_kick", "0", "Toggle auto kick when player disconnected", FCVAR_NONE, true, 0.0, true , 1.0);
     g_cSurvivorLimit        = FindConVar("l4d_survivor_limit");
     g_cSvMaxPlayers         = FindConVar("sv_maxplayers");
     g_cMDStartMedCount      = FindConVar("sm_md_start_medkitcount");
@@ -166,7 +168,7 @@ public void OnClientDisconnect(int client) {
 }
 
 public Action delayedKickTimer(Handle timer, int client) {
-    if(g_iPlayerBotIndex[client] != -1) {
+    if(g_iPlayerBotIndex[client] != -1 && GetConVarInt(g_cAutoKick) > 0) {
         if(g_iPlayerCount > 4) {
             PrintDebug("Kicking disconnected player bot index at %d", g_iPlayerBotIndex[client]);
             KickClient(g_iPlayerBotIndex[client]);
