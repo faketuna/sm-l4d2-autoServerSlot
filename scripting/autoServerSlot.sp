@@ -19,6 +19,7 @@ ConVar g_cMDSafeRoomMedCount;
 ConVar g_cAutoKick;
 
 bool g_bPrintDebugInfo;
+bool g_bAutoKick;
 
 int g_iPlayerCount;
 
@@ -72,6 +73,7 @@ public void OnConfigsExecuted() {
 
 void SyncConVarValues() {
     g_bPrintDebugInfo       = g_cPrintDebugInfo.BoolValue;
+    g_bAutoKick             = g_cAutoKick.BoolValue;
 }
 
 public void OnCvarsChanged(ConVar convar, const char[] oldValue, const char[] newValue) {
@@ -168,7 +170,7 @@ public void OnClientDisconnect(int client) {
 }
 
 public Action delayedKickTimer(Handle timer, int client) {
-    if(g_iPlayerBotIndex[client] != -1 && GetConVarInt(g_cAutoKick) > 0) {
+    if(g_iPlayerBotIndex[client] != -1 && g_bAutoKick) {
         if(g_iPlayerCount > 4) {
             PrintDebug("Kicking disconnected player bot index at %d", g_iPlayerBotIndex[client]);
             KickClient(g_iPlayerBotIndex[client]);
