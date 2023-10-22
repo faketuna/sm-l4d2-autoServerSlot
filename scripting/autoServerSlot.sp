@@ -6,7 +6,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "0.0.1"
+#define PLUGIN_VERSION "0.0.1a"
 
 #define PLUGIN_PREFIX "[AutoServerSlot] "
 #define TEAM_SURVIVOR 2
