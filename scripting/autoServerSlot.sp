@@ -20,6 +20,7 @@ ConVar g_cAutoKick;
 
 bool g_bPrintDebugInfo;
 bool g_bAutoKick;
+bool g_bDependHasMedkitDencity;
 
 int g_iPlayerCount;
 
@@ -41,6 +42,26 @@ public void OnPluginStart()
 {
     g_cPrintDebugInfo       = CreateConVar("sm_aslot_debug", "0", "Toggle debug information that printed to server", FCVAR_NONE, true, 0.0, true , 1.0);
     g_cAutoKick             = CreateConVar("sm_aslot_kick", "0", "Toggle auto kick when player disconnected", FCVAR_NONE, true, 0.0, true , 1.0);
+    
+    HookEvent("player_bot_replace", OnReplacePlayerToBot, EventHookMode_Pre);
+    HookEvent("round_start_post_nav", OnRoundStartPostNav, EventHookMode_Post);
+    HookEvent("round_end", OnRoundEnd, EventHookMode_Post);
+
+    g_cPrintDebugInfo.AddChangeHook(OnCvarsChanged);
+    g_cAutoKick.AddChangeHook(OnCvarsChanged);
+
+    g_iPlayerCount = 0;
+    for(int i = 1; i <= MaxClients; i++) {
+        g_iPlayerBotIndex[i] = -1;
+        if(IsClientConnected(i) && !IsFakeClient(i)) {
+            g_iPlayerCount++;
+        }
+    }
+    g_bIsMapStarted = true;
+}
+
+public void OnAllPluginsLoaded() {
+    g_bDependHasMedkitDencity = false;
     g_cSurvivorLimit        = FindConVar("l4d_survivor_limit");
     g_cSvMaxPlayers         = FindConVar("sv_maxplayers");
     g_cMDStartMedCount      = FindConVar("sm_md_start_medkitcount");
@@ -51,20 +72,8 @@ public void OnPluginStart()
     if(g_cSvMaxPlayers == INVALID_HANDLE)
         SetFailState("This plugin require l4dtoolz to run.");
     
-    HookEvent("player_bot_replace", OnReplacePlayerToBot, EventHookMode_Pre);
-    HookEvent("round_start_post_nav", OnRoundStartPostNav, EventHookMode_Post);
-    HookEvent("round_end", OnRoundEnd, EventHookMode_Post);
-
-    g_cPrintDebugInfo.AddChangeHook(OnCvarsChanged);
-
-    g_iPlayerCount = 0;
-    for(int i = 1; i <= MaxClients; i++) {
-        g_iPlayerBotIndex[i] = -1;
-        if(IsClientConnected(i) && !IsFakeClient(i)) {
-            g_iPlayerCount++;
-        }
-    }
-    g_bIsMapStarted = true;
+    if(g_cMDStartMedCount != INVALID_HANDLE && g_cMDSafeRoomMedCount != INVALID_HANDLE)
+        g_bDependHasMedkitDencity = true;
 }
 
 public void OnConfigsExecuted() {
@@ -226,7 +235,7 @@ void setServerSlotLimit() {
 }
 
 void updateMedKitCount(int medKitCount) {
-    if(g_cMDStartMedCount == INVALID_HANDLE || g_cMDSafeRoomMedCount == INVALID_HANDLE)
+    if(!g_bDependHasMedkitDencity)
         return;
     g_cMDStartMedCount.SetInt(medKitCount);
     g_cMDSafeRoomMedCount.SetInt(medKitCount);
