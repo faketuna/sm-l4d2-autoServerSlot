@@ -13,6 +13,7 @@
 
 ConVar g_cvPrintDebugInfo,
     g_cvSurvivorLimit,
+    g_cvFixedSurvivorLimit,
     g_cvSvMaxPlayers,
     g_cvMDStartMedCount,
     g_cvMDSafeRoomMedCount,
@@ -23,6 +24,8 @@ bool g_bAutoKick;
 bool g_bDependHasMedkitDencity;
 
 int g_iPlayerCount;
+
+int g_iFixedSurvivorCount;
 
 int g_iPlayerBotIndex[MAXPLAYERS];
 
@@ -42,6 +45,8 @@ public void OnPluginStart()
 {
     g_cvPrintDebugInfo       = CreateConVar("sm_aslot_debug", "0", "Toggle debug information that printed to server", FCVAR_NONE, true, 0.0, true , 1.0);
     g_cvAutoKick             = CreateConVar("sm_aslot_kick", "0", "Toggle auto kick when player disconnected", FCVAR_NONE, true, 0.0, true , 1.0);
+    g_cvFixedSurvivorLimit   = CreateConVar("sm_aslot_fixed_slot", "24", "Fix survivor_limit as this number. If set to -1 (not recommended) It will adjust survivor_limit dynamically", FCVAR_NOTIFY, true, -1.0, true, 32.0);
+
     
     HookEvent("player_bot_replace", OnReplacePlayerToBot, EventHookMode_Pre);
     HookEvent("round_start_post_nav", OnRoundStartPostNav, EventHookMode_Post);
@@ -49,6 +54,7 @@ public void OnPluginStart()
 
     g_cvPrintDebugInfo.AddChangeHook(OnCvarsChanged);
     g_cvAutoKick.AddChangeHook(OnCvarsChanged);
+    g_cvFixedSurvivorLimit.AddChangeHook(OnCvarsChanged);
 
     g_iPlayerCount = 0;
     for(int i = 1; i <= MaxClients; i++) {
@@ -62,7 +68,7 @@ public void OnPluginStart()
 
 public void OnAllPluginsLoaded() {
     g_bDependHasMedkitDencity = false;
-    g_cvSurvivorLimit        = FindConVar("l4d_survivor_limit");
+    g_cvSurvivorLimit        = FindConVar("survivor_limit");
     g_cvSvMaxPlayers         = FindConVar("sv_maxplayers");
     g_cvMDStartMedCount      = FindConVar("sm_md_start_medkitcount");
     g_cvMDSafeRoomMedCount   = FindConVar("sm_md_saferoom_medkitcount");
@@ -83,6 +89,13 @@ public void OnConfigsExecuted() {
 void SyncConVarValues() {
     g_bPrintDebugInfo       = g_cvPrintDebugInfo.BoolValue;
     g_bAutoKick             = g_cvAutoKick.BoolValue;
+    if(g_iFixedSurvivorCount != g_cvFixedSurvivorLimit.IntValue) {
+        g_iFixedSurvivorCount = g_cvFixedSurvivorLimit.IntValue;
+        if(g_iFixedSurvivorCount == 0) {
+            g_iFixedSurvivorCount = 1;
+            g_cvFixedSurvivorLimit.SetInt(1);
+        }
+    }
 }
 
 public void OnCvarsChanged(ConVar convar, const char[] oldValue, const char[] newValue) {
@@ -93,6 +106,9 @@ public void OnMapEnd()
 {
     g_iPlayerCount = 0;
     g_bIsMapStarted = false;
+    if(g_iFixedSurvivorCount != -1) {
+        g_cvSurvivorLimit.SetInt(g_iFixedSurvivorCount);
+    }
 }
 
 public Action OnRoundStartPostNav(Handle event, const char[] name, bool dontBroadcast)
@@ -218,10 +234,14 @@ void setSurvivorLimit() {
     if(g_iPlayerCount < 4) {
         PrintDebug("Player count is lower than 4, setting survivor limit to 4");
         updateMedKitCount(4);
-        g_cvSurvivorLimit.SetInt(4);
+        if(g_iFixedSurvivorCount == -1) {
+            g_cvSurvivorLimit.SetInt(4);
+        }
         return;
     }
-    g_cvSurvivorLimit.SetInt(g_iPlayerCount);
+    if(g_iFixedSurvivorCount == -1) {
+        g_cvSurvivorLimit.SetInt(g_iPlayerCount);
+    }
     updateMedKitCount(g_iPlayerCount);
 }
 
