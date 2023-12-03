@@ -74,10 +74,7 @@ public void OnAllPluginsLoaded() {
     g_cvSurvivorLimit        = FindConVar("survivor_limit");
     g_cvSvMaxPlayers         = FindConVar("sv_maxplayers");
     g_cvMDStartMedCount      = FindConVar("sm_md_start_medkitcount");
-    g_cvMDSafeRoomMedCount   = FindConVar("sm_md_saferoom_medkitcount");
-    if(g_cvSurvivorLimit == INVALID_HANDLE)
-        SetFailState("This plugin require l4d_players to run.");
-    
+    g_cvMDSafeRoomMedCount   = FindConVar("sm_md_saferoom_medkitcount");    
     if(g_cvSvMaxPlayers == INVALID_HANDLE)
         SetFailState("This plugin require l4dtoolz to run.");
     
