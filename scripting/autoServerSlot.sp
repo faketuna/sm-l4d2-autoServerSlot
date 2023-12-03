@@ -98,12 +98,18 @@ void SyncConVarValues() {
             g_iFixedSurvivorCount = 1;
             g_cvFixedSurvivorLimit.SetInt(1);
         }
+        if(g_iFixedSurvivorCount != -1) {
+            g_cvSurvivorLimit.SetInt(g_iFixedSurvivorCount);
+        }
     }
     if(g_iFixedSvMaxPlayers != g_cvFixedSvMaxPlayers.IntValue) {
         g_iFixedSvMaxPlayers = g_cvFixedSvMaxPlayers.IntValue;
         if(g_iFixedSvMaxPlayers == 0) {
             g_iFixedSvMaxPlayers = 1;
             g_cvFixedSvMaxPlayers.SetInt(1);
+        }
+        if(g_iFixedSvMaxPlayers != -1) {
+            g_cvSvMaxPlayers.SetInt(g_iFixedSvMaxPlayers);
         }
     }
 }
