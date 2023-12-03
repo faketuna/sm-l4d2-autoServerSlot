@@ -15,6 +15,7 @@ ConVar g_cvPrintDebugInfo,
     g_cvSurvivorLimit,
     g_cvFixedSurvivorLimit,
     g_cvSvMaxPlayers,
+    g_cvFixedSvMaxPlayers,
     g_cvMDStartMedCount,
     g_cvMDSafeRoomMedCount,
     g_cvAutoKick;
@@ -26,6 +27,7 @@ bool g_bDependHasMedkitDencity;
 int g_iPlayerCount;
 
 int g_iFixedSurvivorCount;
+int g_iFixedSvMaxPlayers;
 
 int g_iPlayerBotIndex[MAXPLAYERS];
 
@@ -46,6 +48,7 @@ public void OnPluginStart()
     g_cvPrintDebugInfo       = CreateConVar("sm_aslot_debug", "0", "Toggle debug information that printed to server", FCVAR_NONE, true, 0.0, true , 1.0);
     g_cvAutoKick             = CreateConVar("sm_aslot_kick", "0", "Toggle auto kick when player disconnected", FCVAR_NONE, true, 0.0, true , 1.0);
     g_cvFixedSurvivorLimit   = CreateConVar("sm_aslot_fixed_slot", "24", "Fix survivor_limit as this number. If set to -1 (not recommended) It will adjust survivor_limit dynamically", FCVAR_NOTIFY, true, -1.0, true, 32.0);
+    g_cvFixedSvMaxPlayers    = CreateConVar("sm_aslot_fixed_server_slot", "-1", "Fix sv_maxplayers as this number. If set to -1 It will adjust sv_maxplayers dynamically based from player count + 1", FCVAR_NOTIFY, true, -1.0, true, 32.0);
 
     
     HookEvent("player_bot_replace", OnReplacePlayerToBot, EventHookMode_Pre);
@@ -94,6 +97,13 @@ void SyncConVarValues() {
         if(g_iFixedSurvivorCount == 0) {
             g_iFixedSurvivorCount = 1;
             g_cvFixedSurvivorLimit.SetInt(1);
+        }
+    }
+    if(g_iFixedSvMaxPlayers != g_cvFixedSvMaxPlayers.IntValue) {
+        g_iFixedSvMaxPlayers = g_cvFixedSvMaxPlayers.IntValue;
+        if(g_iFixedSvMaxPlayers == 0) {
+            g_iFixedSvMaxPlayers = 1;
+            g_cvFixedSvMaxPlayers.SetInt(1);
         }
     }
 }
@@ -248,10 +258,14 @@ void setSurvivorLimit() {
 void setServerSlotLimit() {
     if(g_iPlayerCount < 4) {
         PrintDebug("Player count is lower than 4, setting server slot to 4");
-        g_cvSvMaxPlayers.SetInt(4);
+        if(g_iFixedSvMaxPlayers == -1) {
+            g_cvSvMaxPlayers.SetInt(4);
+        }
         return;
     }
-    g_cvSvMaxPlayers.SetInt(g_iPlayerCount+1);
+    if(g_iFixedSvMaxPlayers == -1) {
+        g_cvSvMaxPlayers.SetInt(g_iPlayerCount+1);
+    }
 }
 
 void updateMedKitCount(int medKitCount) {
