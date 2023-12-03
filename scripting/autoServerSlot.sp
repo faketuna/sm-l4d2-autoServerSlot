@@ -11,12 +11,12 @@
 #define PLUGIN_PREFIX "[AutoServerSlot] "
 #define TEAM_SURVIVOR 2
 
-ConVar g_cPrintDebugInfo,
-    g_cSurvivorLimit,
-    g_cSvMaxPlayers,
-    g_cMDStartMedCount,
-    g_cMDSafeRoomMedCount,
-    g_cAutoKick;
+ConVar g_cvPrintDebugInfo,
+    g_cvSurvivorLimit,
+    g_cvSvMaxPlayers,
+    g_cvMDStartMedCount,
+    g_cvMDSafeRoomMedCount,
+    g_cvAutoKick;
 
 bool g_bPrintDebugInfo;
 bool g_bAutoKick;
