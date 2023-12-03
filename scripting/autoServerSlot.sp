@@ -166,30 +166,7 @@ public void OnClientConnected(int client) {
         PrintDebug("Server has enough survivors entities to fit current player count.");
         return;
     }
-    int bot = CreateFakeClient("Creating bot...");
-    if(bot == 0) {
-        PrintDebug("Tried to create a bot. but failed.");
-        return;
-    }
-    
-    ChangeClientTeam(bot, 2);
-    DispatchKeyValue(bot, "classname", "SurvivorBot");
-    DispatchSpawn(bot);
-    if(!IsValidEntity(bot)){
-        PrintDebug("Bot is not a valid entity!");
-        return;
-    }
-    float absPos[3];
-    for(int i = 1; i <= MaxClients; i++){
-        if(IsClientConnected(i) && IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == TEAM_SURVIVOR) {
-            GetClientAbsOrigin(i, absPos);
-            TeleportEntity(bot, absPos, NULL_VECTOR, NULL_VECTOR);
-            PrintDebug("Bot teleported to %N", i);
-            break;
-        }
-    }
-    PrintDebug("Kicking bot.");
-    KickClient(bot, "adding survivor");
+    AddSurvivor();
 }
 
 public void OnClientDisconnect(int client) {
@@ -277,4 +254,31 @@ void updateMedKitCount(int medKitCount) {
     g_cvMDStartMedCount.SetInt(medKitCount);
     g_cvMDSafeRoomMedCount.SetInt(medKitCount);
 
+}
+
+void AddSurvivor() {
+    int bot = CreateFakeClient("Creating bot...");
+    if(bot == 0) {
+        PrintDebug("Tried to create a bot. but failed.");
+        return;
+    }
+    
+    ChangeClientTeam(bot, 2);
+    DispatchKeyValue(bot, "classname", "SurvivorBot");
+    DispatchSpawn(bot);
+    if(!IsValidEntity(bot)){
+        PrintDebug("Bot is not a valid entity!");
+        return;
+    }
+    float absPos[3];
+    for(int i = 1; i <= MaxClients; i++){
+        if(IsClientConnected(i) && IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == TEAM_SURVIVOR) {
+            GetClientAbsOrigin(i, absPos);
+            TeleportEntity(bot, absPos, NULL_VECTOR, NULL_VECTOR);
+            PrintDebug("Bot teleported to %N", i);
+            break;
+        }
+    }
+    PrintDebug("Kicking bot.");
+    KickClient(bot, "adding survivor");
 }
