@@ -40,15 +40,15 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
-    g_cPrintDebugInfo       = CreateConVar("sm_aslot_debug", "0", "Toggle debug information that printed to server", FCVAR_NONE, true, 0.0, true , 1.0);
-    g_cAutoKick             = CreateConVar("sm_aslot_kick", "0", "Toggle auto kick when player disconnected", FCVAR_NONE, true, 0.0, true , 1.0);
+    g_cvPrintDebugInfo       = CreateConVar("sm_aslot_debug", "0", "Toggle debug information that printed to server", FCVAR_NONE, true, 0.0, true , 1.0);
+    g_cvAutoKick             = CreateConVar("sm_aslot_kick", "0", "Toggle auto kick when player disconnected", FCVAR_NONE, true, 0.0, true , 1.0);
     
     HookEvent("player_bot_replace", OnReplacePlayerToBot, EventHookMode_Pre);
     HookEvent("round_start_post_nav", OnRoundStartPostNav, EventHookMode_Post);
     HookEvent("round_end", OnRoundEnd, EventHookMode_Post);
 
-    g_cPrintDebugInfo.AddChangeHook(OnCvarsChanged);
-    g_cAutoKick.AddChangeHook(OnCvarsChanged);
+    g_cvPrintDebugInfo.AddChangeHook(OnCvarsChanged);
+    g_cvAutoKick.AddChangeHook(OnCvarsChanged);
 
     g_iPlayerCount = 0;
     for(int i = 1; i <= MaxClients; i++) {
@@ -62,17 +62,17 @@ public void OnPluginStart()
 
 public void OnAllPluginsLoaded() {
     g_bDependHasMedkitDencity = false;
-    g_cSurvivorLimit        = FindConVar("l4d_survivor_limit");
-    g_cSvMaxPlayers         = FindConVar("sv_maxplayers");
-    g_cMDStartMedCount      = FindConVar("sm_md_start_medkitcount");
-    g_cMDSafeRoomMedCount   = FindConVar("sm_md_saferoom_medkitcount");
-    if(g_cSurvivorLimit == INVALID_HANDLE)
+    g_cvSurvivorLimit        = FindConVar("l4d_survivor_limit");
+    g_cvSvMaxPlayers         = FindConVar("sv_maxplayers");
+    g_cvMDStartMedCount      = FindConVar("sm_md_start_medkitcount");
+    g_cvMDSafeRoomMedCount   = FindConVar("sm_md_saferoom_medkitcount");
+    if(g_cvSurvivorLimit == INVALID_HANDLE)
         SetFailState("This plugin require l4d_players to run.");
     
-    if(g_cSvMaxPlayers == INVALID_HANDLE)
+    if(g_cvSvMaxPlayers == INVALID_HANDLE)
         SetFailState("This plugin require l4dtoolz to run.");
     
-    if(g_cMDStartMedCount != INVALID_HANDLE && g_cMDSafeRoomMedCount != INVALID_HANDLE)
+    if(g_cvMDStartMedCount != INVALID_HANDLE && g_cvMDSafeRoomMedCount != INVALID_HANDLE)
         g_bDependHasMedkitDencity = true;
 }
 
@@ -81,8 +81,8 @@ public void OnConfigsExecuted() {
 }
 
 void SyncConVarValues() {
-    g_bPrintDebugInfo       = g_cPrintDebugInfo.BoolValue;
-    g_bAutoKick             = g_cAutoKick.BoolValue;
+    g_bPrintDebugInfo       = g_cvPrintDebugInfo.BoolValue;
+    g_bAutoKick             = g_cvAutoKick.BoolValue;
 }
 
 public void OnCvarsChanged(ConVar convar, const char[] oldValue, const char[] newValue) {
@@ -218,26 +218,26 @@ void setSurvivorLimit() {
     if(g_iPlayerCount < 4) {
         PrintDebug("Player count is lower than 4, setting survivor limit to 4");
         updateMedKitCount(4);
-        g_cSurvivorLimit.SetInt(4);
+        g_cvSurvivorLimit.SetInt(4);
         return;
     }
-    g_cSurvivorLimit.SetInt(g_iPlayerCount);
+    g_cvSurvivorLimit.SetInt(g_iPlayerCount);
     updateMedKitCount(g_iPlayerCount);
 }
 
 void setServerSlotLimit() {
     if(g_iPlayerCount < 4) {
         PrintDebug("Player count is lower than 4, setting server slot to 4");
-        g_cSvMaxPlayers.SetInt(4);
+        g_cvSvMaxPlayers.SetInt(4);
         return;
     }
-    g_cSvMaxPlayers.SetInt(g_iPlayerCount+1);
+    g_cvSvMaxPlayers.SetInt(g_iPlayerCount+1);
 }
 
 void updateMedKitCount(int medKitCount) {
     if(!g_bDependHasMedkitDencity)
         return;
-    g_cMDStartMedCount.SetInt(medKitCount);
-    g_cMDSafeRoomMedCount.SetInt(medKitCount);
+    g_cvMDStartMedCount.SetInt(medKitCount);
+    g_cvMDSafeRoomMedCount.SetInt(medKitCount);
 
 }
