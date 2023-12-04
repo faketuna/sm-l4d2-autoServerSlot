@@ -45,6 +45,7 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
+    CreateConVar("sm_aslot_version", PLUGIN_VERSION, "Auto server slot version.", FCVAR_DONTRECORD);
     g_cvPrintDebugInfo       = CreateConVar("sm_aslot_debug", "0", "Toggle debug information that printed to server", FCVAR_NONE, true, 0.0, true , 1.0);
     g_cvAutoKick             = CreateConVar("sm_aslot_kick", "0", "Toggle auto kick when player disconnected", FCVAR_NONE, true, 0.0, true , 1.0);
     g_cvFixedSurvivorLimit   = CreateConVar("sm_aslot_fixed_survivor_limit", "24", "Fix survivor_limit as this number. If set to -1 (not recommended) It will adjust survivor_limit dynamically", FCVAR_NOTIFY, true, -1.0, true, 32.0);
