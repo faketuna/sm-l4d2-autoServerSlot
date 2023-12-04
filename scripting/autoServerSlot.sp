@@ -38,7 +38,7 @@ public Plugin myinfo =
 {
     name = "[L4D2] Auto server slot",
     author = "faketuna",
-    description = "Control surivor limit dynamically",
+    description = "Control surivor_limit and sv_maxplayers dynamically",
     version = PLUGIN_VERSION,
     url = "https://short.f2a.dev/s/github"
 };
