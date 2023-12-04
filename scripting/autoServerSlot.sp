@@ -31,7 +31,7 @@ int g_iFixedSvMaxPlayers;
 
 int g_iPlayerBotIndex[MAXPLAYERS];
 
-bool g_bIsMapStarted;
+bool g_bRoundInitialized;
 
 
 public Plugin myinfo = 
@@ -66,7 +66,7 @@ public void OnPluginStart()
             g_iPlayerCount++;
         }
     }
-    g_bIsMapStarted = true;
+    g_bRoundInitialized = true;
 }
 
 public void OnAllPluginsLoaded() {
@@ -118,7 +118,7 @@ public void OnCvarsChanged(ConVar convar, const char[] oldValue, const char[] ne
 public void OnMapEnd()
 {
     g_iPlayerCount = 0;
-    g_bIsMapStarted = false;
+    g_bRoundInitialized = false;
     if(g_iFixedSurvivorCount != -1) {
         g_cvSurvivorLimit.SetInt(g_iFixedSurvivorCount);
     }
@@ -126,14 +126,14 @@ public void OnMapEnd()
 
 public Action OnRoundStartPostNav(Handle event, const char[] name, bool dontBroadcast)
 {
-    if(!g_bIsMapStarted){
+    if(!g_bRoundInitialized){
         CreateTimer(10.0, DelayedMapStartTimer, _, TIMER_FLAG_NO_MAPCHANGE);
     }
     return Plugin_Continue;
 }
 
 public Action DelayedMapStartTimer(Handle timer) {
-    g_bIsMapStarted = true;
+    g_bRoundInitialized = true;
     CreateTimer(0.5, PlayerBotSpawnTimer, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
     return Plugin_Stop;
 }
@@ -151,7 +151,7 @@ public Action PlayerBotSpawnTimer(Handle timer) {
 
 public Action OnRoundEnd(Handle event, const char[] name, bool dontBroadcast)
 {
-    g_bIsMapStarted = false;
+    g_bRoundInitialized = false;
     return Plugin_Continue;
 }
 
@@ -164,7 +164,7 @@ public void OnClientConnected(int client) {
     setSurvivorLimit();
     PrintDebug("The player count increased to %d", g_iPlayerCount);
 
-    if(!g_bIsMapStarted)
+    if(!g_bRoundInitialized)
         return;
 
     int inGameClients = 0;
@@ -192,7 +192,7 @@ public void OnClientDisconnect(int client) {
     setSurvivorLimit();
     PrintDebug("The player count decreased to %d", g_iPlayerCount);
 
-    if(!g_bIsMapStarted) 
+    if(!g_bRoundInitialized) 
         return;
 
     CreateTimer(0.4, delayedKickTimer, client, TIMER_FLAG_NO_MAPCHANGE);
