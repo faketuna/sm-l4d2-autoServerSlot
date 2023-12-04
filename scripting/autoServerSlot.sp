@@ -244,9 +244,9 @@ void setSurvivorLimit() {
         return;
     }
     if(g_iFixedSurvivorCount == -1) {
-        updateMedKitCount(g_iPlayerCount);
         g_cvSurvivorLimit.SetInt(g_iPlayerCount);
     }
+    updateMedKitCount(g_iPlayerCount);
 }
 
 void setServerSlotLimit() {
