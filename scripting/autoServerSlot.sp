@@ -236,17 +236,17 @@ void PrintDebug(const char[] msg, any ...) {
 
 void setSurvivorLimit() {
     if(g_iPlayerCount < 4) {
-        updateMedKitCount(4);
         if(g_iFixedSurvivorCount == -1) {
             PrintDebug("Player count is lower than 4, setting survivor limit to 4");
+            updateMedKitCount(4);
             g_cvSurvivorLimit.SetInt(4);
         }
         return;
     }
     if(g_iFixedSurvivorCount == -1) {
+        updateMedKitCount(g_iPlayerCount);
         g_cvSurvivorLimit.SetInt(g_iPlayerCount);
     }
-    updateMedKitCount(g_iPlayerCount);
 }
 
 void setServerSlotLimit() {
