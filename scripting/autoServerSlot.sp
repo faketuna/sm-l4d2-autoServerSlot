@@ -136,7 +136,7 @@ public void OnMapEnd()
 public Action OnRoundStartPostNav(Handle event, const char[] name, bool dontBroadcast)
 {
     if(!g_bRoundInitialized){
-        CreateTimer(10.0, DelayedMapStartTimer, _, TIMER_FLAG_NO_MAPCHANGE);
+        CreateTimer(3.0, DelayedMapStartTimer, _, TIMER_FLAG_NO_MAPCHANGE);
     }
     return Plugin_Continue;
 }
