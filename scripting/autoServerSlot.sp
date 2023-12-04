@@ -81,8 +81,10 @@ public void OnAllPluginsLoaded() {
     if(g_cvSvMaxPlayers == INVALID_HANDLE)
         SetFailState("This plugin require l4dtoolz to run.");
     
-    if(g_cvMDStartMedCount != INVALID_HANDLE && g_cvMDSafeRoomMedCount != INVALID_HANDLE)
+    if(g_cvMDStartMedCount != INVALID_HANDLE && g_cvMDSafeRoomMedCount != INVALID_HANDLE) {
         g_bDependHasMedkitDencity = true;
+        updateMedKitCount(g_iPlayerCount);
+    }
 }
 
 public void OnConfigsExecuted() {
