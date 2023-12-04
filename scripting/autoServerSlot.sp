@@ -59,6 +59,7 @@ public void OnPluginStart()
     g_cvPrintDebugInfo.AddChangeHook(OnCvarsChanged);
     g_cvAutoKick.AddChangeHook(OnCvarsChanged);
     g_cvFixedSurvivorLimit.AddChangeHook(OnCvarsChanged);
+    g_cvFixedSvMaxPlayers.AddChangeHook(OnCvarsChanged);
 
     g_iPlayerCount = 0;
     for(int i = 1; i <= MaxClients; i++) {
@@ -73,6 +74,7 @@ public void OnPluginStart()
 public void OnAllPluginsLoaded() {
     g_bDependHasMedkitDencity = false;
     g_cvSurvivorLimit        = FindConVar("survivor_limit");
+    SetConVarBounds(g_cvSurvivorLimit, ConVarBound_Upper, true, 32.0);
     g_cvSvMaxPlayers         = FindConVar("sv_maxplayers");
     g_cvMDStartMedCount      = FindConVar("sm_md_start_medkitcount");
     g_cvMDSafeRoomMedCount   = FindConVar("sm_md_saferoom_medkitcount");    
@@ -90,25 +92,31 @@ public void OnConfigsExecuted() {
 void SyncConVarValues() {
     g_bPrintDebugInfo       = g_cvPrintDebugInfo.BoolValue;
     g_bAutoKick             = g_cvAutoKick.BoolValue;
-    if(g_iFixedSurvivorCount != g_cvFixedSurvivorLimit.IntValue) {
-        g_iFixedSurvivorCount = g_cvFixedSurvivorLimit.IntValue;
-        if(g_iFixedSurvivorCount == 0) {
-            g_iFixedSurvivorCount = 1;
-            g_cvFixedSurvivorLimit.SetInt(1);
-        }
-        if(g_iFixedSurvivorCount != -1) {
-            g_cvSurvivorLimit.SetInt(g_iFixedSurvivorCount);
-        }
+
+    g_iFixedSurvivorCount = g_cvFixedSurvivorLimit.IntValue;
+    if(g_iFixedSurvivorCount == 0) {
+        g_iFixedSurvivorCount = 1;
+        g_cvFixedSurvivorLimit.SetInt(1);
     }
-    if(g_iFixedSvMaxPlayers != g_cvFixedSvMaxPlayers.IntValue) {
-        g_iFixedSvMaxPlayers = g_cvFixedSvMaxPlayers.IntValue;
-        if(g_iFixedSvMaxPlayers == 0) {
-            g_iFixedSvMaxPlayers = 1;
-            g_cvFixedSvMaxPlayers.SetInt(1);
-        }
-        if(g_iFixedSvMaxPlayers != -1) {
-            g_cvSvMaxPlayers.SetInt(g_iFixedSvMaxPlayers);
-        }
+    if(g_iFixedSurvivorCount == -1) {
+        PrintDebug("g_cvSurvivorLimit to %d", (g_iPlayerCount < 4) ? 4 : g_iPlayerCount + 1);
+        g_cvSurvivorLimit.SetInt((g_iPlayerCount < 4) ? 4 : g_iPlayerCount + 1, true, false);
+    }
+    else {
+        PrintDebug("not -1 g_cvSurvivorLimit to %d", g_iFixedSurvivorCount);
+        g_cvSurvivorLimit.SetInt(g_iFixedSurvivorCount, true, false);
+    }
+
+    g_iFixedSvMaxPlayers = g_cvFixedSvMaxPlayers.IntValue;
+    if(g_iFixedSvMaxPlayers == 0) {
+        g_iFixedSvMaxPlayers = 1;
+        g_cvFixedSvMaxPlayers.SetInt(1);
+    }
+    if(g_iFixedSvMaxPlayers == -1) {
+        g_cvSvMaxPlayers.SetInt((g_iPlayerCount < 4) ? 4 : g_iPlayerCount + 1);
+    }
+    else {
+        g_cvSvMaxPlayers.SetInt(g_iFixedSvMaxPlayers);
     }
 }
 
