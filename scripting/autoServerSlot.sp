@@ -99,11 +99,9 @@ void SyncConVarValues() {
         g_cvFixedSurvivorLimit.SetInt(1);
     }
     if(g_iFixedSurvivorCount == -1) {
-        PrintDebug("g_cvSurvivorLimit to %d", (g_iPlayerCount < 4) ? 4 : g_iPlayerCount + 1);
-        g_cvSurvivorLimit.SetInt((g_iPlayerCount < 4) ? 4 : g_iPlayerCount + 1, true, false);
+        g_cvSurvivorLimit.SetInt((g_iPlayerCount < 4) ? 4 : g_iPlayerCount, true, false);
     }
     else {
-        PrintDebug("not -1 g_cvSurvivorLimit to %d", g_iFixedSurvivorCount);
         g_cvSurvivorLimit.SetInt(g_iFixedSurvivorCount, true, false);
     }
 
