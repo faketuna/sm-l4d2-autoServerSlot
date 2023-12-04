@@ -47,7 +47,7 @@ public void OnPluginStart()
 {
     g_cvPrintDebugInfo       = CreateConVar("sm_aslot_debug", "0", "Toggle debug information that printed to server", FCVAR_NONE, true, 0.0, true , 1.0);
     g_cvAutoKick             = CreateConVar("sm_aslot_kick", "0", "Toggle auto kick when player disconnected", FCVAR_NONE, true, 0.0, true , 1.0);
-    g_cvFixedSurvivorLimit   = CreateConVar("sm_aslot_fixed_slot", "24", "Fix survivor_limit as this number. If set to -1 (not recommended) It will adjust survivor_limit dynamically", FCVAR_NOTIFY, true, -1.0, true, 32.0);
+    g_cvFixedSurvivorLimit   = CreateConVar("sm_aslot_fixed_survivor_limit", "24", "Fix survivor_limit as this number. If set to -1 (not recommended) It will adjust survivor_limit dynamically", FCVAR_NOTIFY, true, -1.0, true, 32.0);
     g_cvFixedSvMaxPlayers    = CreateConVar("sm_aslot_fixed_server_slot", "-1", "Fix sv_maxplayers as this number. If set to -1 It will adjust sv_maxplayers dynamically based from player count + 1", FCVAR_NOTIFY, true, -1.0, true, 32.0);
 
     
