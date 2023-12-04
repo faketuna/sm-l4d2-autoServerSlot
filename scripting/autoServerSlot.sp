@@ -126,12 +126,26 @@ public void OnMapEnd()
 
 public Action OnRoundStartPostNav(Handle event, const char[] name, bool dontBroadcast)
 {
-    CreateTimer(10.0, DelayedMapStartTimer, _, TIMER_FLAG_NO_MAPCHANGE);
+    if(!g_bIsMapStarted){
+        CreateTimer(10.0, DelayedMapStartTimer, _, TIMER_FLAG_NO_MAPCHANGE);
+    }
     return Plugin_Continue;
 }
 
 public Action DelayedMapStartTimer(Handle timer) {
     g_bIsMapStarted = true;
+    CreateTimer(0.5, PlayerBotSpawnTimer, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+    return Plugin_Stop;
+}
+
+public Action PlayerBotSpawnTimer(Handle timer) {
+    int survivors = GetTeamClientCount(TEAM_SURVIVOR);
+
+    PrintDebug("Survivor ent: %d | Player count: %d", survivors, g_iPlayerCount);
+    if(survivors < g_iPlayerCount) {
+        AddSurvivor();
+        return Plugin_Continue;
+    }
     return Plugin_Stop;
 }
 
