@@ -38,7 +38,7 @@ public Plugin myinfo =
 {
     name = "[L4D2] Auto server slot",
     author = "faketuna",
-    description = "Control surivor_limit and sv_maxplayers dynamically",
+    description = "Control surivor count and sv_maxplayers dynamically",
     version = PLUGIN_VERSION,
     url = "https://short.f2a.dev/s/github"
 };
@@ -55,6 +55,7 @@ public void OnPluginStart()
     HookEvent("player_bot_replace", OnReplacePlayerToBot, EventHookMode_Pre);
     HookEvent("round_start_post_nav", OnRoundStartPostNav, EventHookMode_Post);
     HookEvent("round_end", OnRoundEnd, EventHookMode_Post);
+    HookEvent("player_disconnect", OnPlayerDisconnect, EventHookMode_Post);
 
     g_cvPrintDebugInfo.AddChangeHook(OnCvarsChanged);
     g_cvAutoKick.AddChangeHook(OnCvarsChanged);
@@ -191,7 +192,7 @@ public void OnClientConnected(int client) {
     }
     AddSurvivor();
 }
-
+/*
 public void OnClientDisconnect(int client) {
     if(IsFakeClient(client))
         return;
@@ -205,6 +206,25 @@ public void OnClientDisconnect(int client) {
         return;
 
     CreateTimer(0.4, delayedKickTimer, client, TIMER_FLAG_NO_MAPCHANGE);
+}
+*/
+
+public Action OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadcast) {
+    int client = GetClientOfUserId(GetEventInt(event, "userid", 0));
+
+    if(IsFakeClient(client))
+        return Plugin_Continue;
+
+    char reason[128];
+    GetEventString(event, "reason", reason, sizeof(reason), "");
+    PrintDebug("REASON: %s", reason);
+    if(StrEqual(reason, ""))
+        return Plugin_Continue;
+    
+    if(StrContains(reason, "by user", false) != -1) {
+        CreateTimer(0.4, delayedKickTimer, client, TIMER_FLAG_NO_MAPCHANGE);
+    }
+    return Plugin_Continue;
 }
 
 public Action delayedKickTimer(Handle timer, int client) {
