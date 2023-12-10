@@ -70,6 +70,7 @@ public void OnPluginStart()
         }
     }
     g_bRoundInitialized = true;
+    AutoExecConfig(true, "autoServerSlot");
 }
 
 public void OnAllPluginsLoaded() {
