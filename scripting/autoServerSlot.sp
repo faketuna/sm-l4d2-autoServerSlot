@@ -192,22 +192,6 @@ public void OnClientConnected(int client) {
     }
     AddSurvivor();
 }
-/*
-public void OnClientDisconnect(int client) {
-    if(IsFakeClient(client))
-        return;
-
-    g_iPlayerCount--;
-    setServerSlotLimit();
-    setSurvivorLimit();
-    PrintDebug("The player count decreased to %d", g_iPlayerCount);
-
-    if(!g_bRoundInitialized) 
-        return;
-
-    CreateTimer(0.4, delayedKickTimer, client, TIMER_FLAG_NO_MAPCHANGE);
-}
-*/
 
 public void OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadcast) {
     int client = GetClientOfUserId(GetEventInt(event, "userid", 0));
