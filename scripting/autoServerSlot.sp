@@ -209,22 +209,28 @@ public void OnClientDisconnect(int client) {
 }
 */
 
-public Action OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadcast) {
+public void OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadcast) {
     int client = GetClientOfUserId(GetEventInt(event, "userid", 0));
 
     if(IsFakeClient(client))
-        return Plugin_Continue;
+        return;
 
+    g_iPlayerCount--;
+    setServerSlotLimit();
+    setSurvivorLimit();
+    PrintDebug("The player count decreased to %d", g_iPlayerCount);
+
+    PrintDebug("Player: %N || Engine time: %d", client, GetEngineTime());
     char reason[128];
     GetEventString(event, "reason", reason, sizeof(reason), "");
     PrintDebug("REASON: %s", reason);
     if(StrEqual(reason, ""))
-        return Plugin_Continue;
+        return;
     
     if(StrContains(reason, "by user", false) != -1) {
         CreateTimer(0.4, delayedKickTimer, client, TIMER_FLAG_NO_MAPCHANGE);
     }
-    return Plugin_Continue;
+    return;
 }
 
 public Action delayedKickTimer(Handle timer, int client) {
