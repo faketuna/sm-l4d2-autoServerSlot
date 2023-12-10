@@ -220,7 +220,6 @@ public void OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadca
     setSurvivorLimit();
     PrintDebug("The player count decreased to %d", g_iPlayerCount);
 
-    PrintDebug("Player: %N || Engine time: %d", client, GetEngineTime());
     char reason[128];
     GetEventString(event, "reason", reason, sizeof(reason), "");
     PrintDebug("REASON: %s", reason);
@@ -234,6 +233,7 @@ public void OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadca
 }
 
 public Action delayedKickTimer(Handle timer, int client) {
+    PrintDebug("Delayed kick timer fired.");
     if(g_iPlayerBotIndex[client] != -1 && g_bAutoKick) {
         if(g_iPlayerCount > 4) {
             PrintDebug("Kicking disconnected player bot index at %d", g_iPlayerBotIndex[client]);
@@ -306,6 +306,7 @@ void updateMedKitCount(int medKitCount) {
 }
 
 void AddSurvivor() {
+    PrintDebug("AddSurvivor() called");
     int bot = CreateFakeClient("Creating bot...");
     if(bot == 0) {
         PrintDebug("Tried to create a bot. but failed.");
