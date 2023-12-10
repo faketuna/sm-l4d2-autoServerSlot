@@ -212,7 +212,7 @@ public void OnClientDisconnect(int client) {
 public void OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadcast) {
     int client = GetClientOfUserId(GetEventInt(event, "userid", 0));
 
-    if(IsFakeClient(client))
+    if(IsFakeClient(client) || !dontBroadcast)
         return;
 
     g_iPlayerCount--;
