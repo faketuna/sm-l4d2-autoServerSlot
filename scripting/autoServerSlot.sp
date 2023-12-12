@@ -34,7 +34,7 @@ int g_iPlayerBotIndex[MAXPLAYERS];
 bool g_bRoundInitialized;
 
 // Workaround for hookevent fire twice
-int g_iPlayerLastDisconnectTime[MAXPLAYERS];
+bool g_bPlayerDisconnectTriggered[MAXPLAYERS];
 
 public Plugin myinfo = 
 {
@@ -176,7 +176,7 @@ public void OnClientConnected(int client) {
     setServerSlotLimit();
     setSurvivorLimit();
     PrintDebug("The player count increased to %d", g_iPlayerCount);
-    g_iPlayerLastDisconnectTime[client] = 0;
+    g_bPlayerDisconnectTriggered[client] = false;
 
     if(!g_bRoundInitialized)
         return;
@@ -203,10 +203,10 @@ public void OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadca
     if(IsFakeClient(client))
         return;
 
-    if(g_iPlayerLastDisconnectTime[client] != 0 && GetTime() - g_iPlayerLastDisconnectTime[client] > 0)
+    if(g_bPlayerDisconnectTriggered[client])
         return;
 
-    g_iPlayerLastDisconnectTime[client] = GetTime();
+    g_bPlayerDisconnectTriggered[client] = true;
     g_iPlayerCount--;
     setServerSlotLimit();
     setSurvivorLimit();
