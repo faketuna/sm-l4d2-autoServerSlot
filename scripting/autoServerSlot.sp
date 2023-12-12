@@ -232,7 +232,7 @@ public void OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadca
 
 public Action delayedKickTimer(Handle timer, int client) {
     PrintDebug("Delayed kick timer fired.");
-    if(g_iPlayerBotIndex[client] != -1 && g_bAutoKick) {
+    if(g_iPlayerBotIndex[client] != -1 && g_bAutoKick && g_iPlayerCount > 0) {
         if(g_iPlayerCount > 4) {
             PrintDebug("Kicking disconnected player bot index at %d", g_iPlayerBotIndex[client]);
             KickClient(g_iPlayerBotIndex[client]);
