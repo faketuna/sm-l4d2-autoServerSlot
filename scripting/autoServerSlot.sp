@@ -33,6 +33,8 @@ int g_iPlayerBotIndex[MAXPLAYERS];
 
 bool g_bRoundInitialized;
 
+// Workaround for hookevent fire twice
+int g_iPlayerLastDisconnectTime[MAXPLAYERS];
 
 public Plugin myinfo = 
 {
@@ -174,6 +176,7 @@ public void OnClientConnected(int client) {
     setServerSlotLimit();
     setSurvivorLimit();
     PrintDebug("The player count increased to %d", g_iPlayerCount);
+    g_iPlayerLastDisconnectTime[client] = 0;
 
     if(!g_bRoundInitialized)
         return;
@@ -191,15 +194,19 @@ public void OnClientConnected(int client) {
         PrintDebug("Server has enough survivors entities to fit current player count.");
         return;
     }
-    AddSurvivor();
+    AddSurvivor(client);
 }
 
 public void OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadcast) {
     int client = GetClientOfUserId(GetEventInt(event, "userid", 0));
 
-    if(IsFakeClient(client) || !dontBroadcast)
+    if(IsFakeClient(client))
         return;
 
+    if(g_iPlayerLastDisconnectTime[client] != 0 && GetTime() - g_iPlayerLastDisconnectTime[client] > 0)
+        return;
+
+    g_iPlayerLastDisconnectTime[client] = GetTime();
     g_iPlayerCount--;
     setServerSlotLimit();
     setSurvivorLimit();
@@ -290,12 +297,15 @@ void updateMedKitCount(int medKitCount) {
 
 }
 
-void AddSurvivor() {
+void AddSurvivor(int client = -1) {
     PrintDebug("AddSurvivor() called");
     int bot = CreateFakeClient("Creating bot...");
     if(bot == 0) {
         PrintDebug("Tried to create a bot. but failed.");
         return;
+    }
+    if(client != -1) {
+        g_iPlayerBotIndex[client] = bot;
     }
     
     ChangeClientTeam(bot, 2);
