@@ -168,15 +168,10 @@ public Action OnRoundEnd(Handle event, const char[] name, bool dontBroadcast)
     return Plugin_Continue;
 }
 
-public void OnClientConnected(int client) {
+public void OnClientPutInServer(int client) {
     if(IsFakeClient(client))
         return;
 
-    g_iPlayerCount++;
-    setServerSlotLimit();
-    setSurvivorLimit();
-    PrintDebug("The player count increased to %d", g_iPlayerCount);
-    g_bPlayerDisconnectTriggered[client] = false;
 
     if(!g_bRoundInitialized)
         return;
@@ -194,7 +189,18 @@ public void OnClientConnected(int client) {
         PrintDebug("Server has enough survivors entities to fit current player count.");
         return;
     }
-    AddSurvivor(client);
+    AddSurvivor();
+}
+
+public void OnClientConnected(int client) {
+    if(IsFakeClient(client))
+        return;
+
+    g_iPlayerCount++;
+    setServerSlotLimit();
+    setSurvivorLimit();
+    PrintDebug("The player count increased to %d", g_iPlayerCount);
+    g_bPlayerDisconnectTriggered[client] = false;
 }
 
 public void OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadcast) {
@@ -297,15 +303,12 @@ void updateMedKitCount(int medKitCount) {
 
 }
 
-void AddSurvivor(int client = -1) {
+void AddSurvivor() {
     PrintDebug("AddSurvivor() called");
     int bot = CreateFakeClient("Creating bot...");
     if(bot == 0) {
         PrintDebug("Tried to create a bot. but failed.");
         return;
-    }
-    if(client != -1) {
-        g_iPlayerBotIndex[client] = bot;
     }
     
     ChangeClientTeam(bot, 2);
