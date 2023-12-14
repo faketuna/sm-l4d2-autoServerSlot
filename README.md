@@ -14,7 +14,7 @@ Any similar plugins that automate the survivor spawn, like [LEFT12DEAD](https://
 
 ## Dependency
 
-* [l4dtoolz](https://forums.alliedmods.net/showthread.php?t=93600)
+* [l4dtoolz](https://github.com/Accelerator74/l4dtoolz/releases)
 
 ## Optional dependency
 
