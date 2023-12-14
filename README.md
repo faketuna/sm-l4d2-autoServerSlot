@@ -1,4 +1,4 @@
-# Auto survivor slot
+# Auto server slot
 
 ## Caution
 
