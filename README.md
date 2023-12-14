@@ -4,6 +4,8 @@
 
 Any similar plugins that automate the survivor spawn, like [LEFT12DEAD](https://forums.alliedmods.net/showthread.php?t=126857) will conflict with this plugin. please remove it.
 
+This plugin requires [multicolors](https://github.com/Bara/Multi-Colors) to compile!!!
+
 ## Feature
 
 * Dynamically adjust the survivors count.
