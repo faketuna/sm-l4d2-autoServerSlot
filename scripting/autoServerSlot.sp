@@ -176,16 +176,11 @@ public void OnClientPutInServer(int client) {
     if(!g_bRoundInitialized)
         return;
 
-    int inGameClients = 0;
-    for(int i = 1; i <= MaxClients; i++) {
-        if(!IsClientConnected(i) || !IsClientInGame(i) || GetClientTeam(i) != TEAM_SURVIVOR)
-            continue;
-        inGameClients++;
-    }
+    int survivors = GetTeamClientCount(TEAM_SURVIVOR);
 
-    PrintDebug("In game suriviros: %d", inGameClients);
+    PrintDebug("In game suriviros: %d", survivors);
     PrintDebug("Current players: %d", g_iPlayerCount);
-    if(g_iPlayerCount <= inGameClients) {
+    if(g_iPlayerCount <= survivors) {
         PrintDebug("Server has enough survivors entities to fit current player count.");
         return;
     }
