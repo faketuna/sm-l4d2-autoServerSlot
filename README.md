@@ -1,5 +1,7 @@
 # Auto server slot
 
+[English] [[日本語]](README_JA.md)
+
 ## Caution
 
 Any similar plugins that automate the survivor spawn, like [LEFT12DEAD](https://forums.alliedmods.net/showthread.php?t=126857) will conflict with this plugin. please remove it.
