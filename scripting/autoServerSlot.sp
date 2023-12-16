@@ -6,7 +6,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.0.1"
+#define PLUGIN_VERSION "1.0.2"
 
 #define PLUGIN_PREFIX "[AutoServerSlot] "
 #define TEAM_SURVIVOR 2
@@ -176,16 +176,11 @@ public void OnClientPutInServer(int client) {
     if(!g_bRoundInitialized)
         return;
 
-    int inGameClients = 0;
-    for(int i = 1; i <= MaxClients; i++) {
-        if(!IsClientConnected(i) || !IsClientInGame(i) || GetClientTeam(i) != TEAM_SURVIVOR)
-            continue;
-        inGameClients++;
-    }
+    int survivors = GetTeamClientCount(TEAM_SURVIVOR);
 
-    PrintDebug("In game suriviros: %d", inGameClients);
+    PrintDebug("In game suriviros: %d", survivors);
     PrintDebug("Current players: %d", g_iPlayerCount);
-    if(g_iPlayerCount <= inGameClients) {
+    if(g_iPlayerCount <= survivors) {
         PrintDebug("Server has enough survivors entities to fit current player count.");
         return;
     }
@@ -204,9 +199,9 @@ public void OnClientConnected(int client) {
 }
 
 public void OnPlayerDisconnect(Handle event, const char[] name, bool dontBroadcast) {
-    int client = GetClientOfUserId(GetEventInt(event, "userid", -1));
+    int client = GetClientOfUserId(GetEventInt(event, "userid", 0));
 
-    if(client == -1) {
+    if(client == 0) {
         PrintDebug("Event key userid is not found in player_disconnect event.");
         return;
     }
@@ -249,15 +244,15 @@ public Action delayedKickTimer(Handle timer, int client) {
 
 public Action OnReplacePlayerToBot(Handle event, char[] name, bool dontBroadcast)
 {
-    int player = GetClientOfUserId(GetEventInt(event, "player", -1));
-    int bot    = GetClientOfUserId(GetEventInt(event, "bot", -1));
+    int player = GetClientOfUserId(GetEventInt(event, "player", 0));
+    int bot    = GetClientOfUserId(GetEventInt(event, "bot", 0));
 
-    if(player == -1) {
+    if(player == 0) {
         PrintDebug("Event key player is not found in player_bot_replace event.");
         return Plugin_Continue;
     }
 
-    if(bot == -1) {
+    if(bot == 0) {
         PrintDebug("Event key bot is not found in player_bot_replace event.");
         return Plugin_Continue;
     }
